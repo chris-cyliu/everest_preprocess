@@ -1,0 +1,1 @@
+ls vdata/Times-Square/images/ | sed "s:^:vdata/Times-Square/images/:" > Times-Square_images
