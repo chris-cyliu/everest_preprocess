@@ -5,7 +5,7 @@ if [ "$#" -ne 5 ]; then
 fi
 
 # enable conda
-soruce ~/.bashrc
+source ~/.bashrc
 
 BASEPATH=`dirname $0`
 FILE_VIDEO=${1}
