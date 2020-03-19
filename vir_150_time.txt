@@ -1,3 +1,0 @@
-days:0
-seconds:25198
-microseconds:745897

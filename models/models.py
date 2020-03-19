@@ -39,14 +39,17 @@ class YOLOv3():
         return output
 
     def predict(self, image_path):
-        image = Image.open(image_path).convert('RGB')
-        image = transforms.ToTensor()(image)
-        # image, _ = pad_to_square(image, 0)
-        # image = resize(image, 416)
-        image = image[None, ...]
-        output = self.forward(image)
+        try:
+            image = Image.open(image_path).convert('RGB')
+            image = transforms.ToTensor()(image)
+            # image, _ = pad_to_square(image, 0)
+            # image = resize(image, 416)
+            image = image[None, ...]
+            output = self.forward(image)
 
-        return output
+            return output
+        except Exception as e:
+            raise Exception("Fail to process image: %s" % (image_path), e)
 
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
