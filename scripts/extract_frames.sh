@@ -16,8 +16,10 @@ if [ ! -d "${DIR_OUTPUT}" ]; then
     mkdir -p ${DIR_OUTPUT}
 fi
 
+OPTS=''
+
 if [ ${NUM_FRAME} == "0" ]; then
-  ffmpeg -i ${FILE_VIDEO} ${DIR_OUTPUT}/%d.jpg
+  /usr/bin/ffmpeg -i ${FILE_VIDEO} ${OPTS} ${DIR_OUTPUT}/%d.jpg
 else
-  ffmpeg -i ${FILE_VIDEO} -vframes ${NUM_FRAME} ${DIR_OUTPUT}/%d.jpg
+  /usr/bin/ffmpeg -i ${FILE_VIDEO} ${OPTS} -vframes ${NUM_FRAME} ${DIR_OUTPUT}/%d.jpg
 fi

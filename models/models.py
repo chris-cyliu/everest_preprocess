@@ -19,7 +19,7 @@ def difference_detector(template, frame, threshold):
 
 
 class YOLOv3():
-    def __init__(self, config_path, weight_path, conf_thr=0.5, nms_thr=0.45):
+    def __init__(self, config_path, weight_path, conf_thr=0.1, nms_thr=0.45):
         self.conf_thr = conf_thr
         self.nms_thr = nms_thr
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -37,6 +37,18 @@ class YOLOv3():
         output = nms(output, self.conf_thr, self.nms_thr)
 
         return output
+
+    # In Bacth
+    def predict_tensor(self, tensor):
+        try:
+            image = tensor
+            # image, _ = pad_to_square(image, 0)
+            # image = resize(image, 416)
+            output = self.forward(image)
+
+            return output
+        except Exception as e:
+            raise Exception("Fail to process image", e)
 
     def predict(self, image_path):
         try:
