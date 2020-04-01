@@ -22,12 +22,14 @@ import lmdb
 from tqdm import tqdm
 import logging
 
-batch_size = 5
-sequence_length = 10
+import matplotlib.pyplot as plt
+
+batch_size = 1
+sequence_length = 1
 initial_prefetch_size = 1
 resize_x = 416
 resize_y = 416
-buffer_size_image = 5
+buffer_size_image = 64
 
 num_inference_process = 4
 
@@ -56,6 +58,9 @@ class WrapLMDB():
         with self.lmdb_ctx.begin(write=True) as txn:
             txn.put(str(frame_id).encode(), label.encode())
 
+    def get_by_frame_id(self, frame_id):
+        with self.lmdb_ctx.begin() as txn:
+            return txn.get(str(frame_id).encode())
 
 class ImageQueue():
     def __init__(self):
@@ -125,13 +130,16 @@ def run_inference_yolo(image_queue, config_path, weight_path, lmdb_path):
         frame_id, frame_tensor = image_queue.pop_image()
         if frame_id == -1:
             break
-
+        frame_tensor = frame_tensor/255
+        # torchvision.utils.save_image(frame_tensor.permute(2,0,1), '/tmp/%org.png' % frame_id)
         # resize here
         frame_tensor = torch.unsqueeze(frame_tensor, 0)
         frame_tensor = frame_tensor.permute(0,3,1,2)
         frame_tensor = torch.nn.functional.interpolate(frame_tensor,
                                                        size=(resize_y,resize_x),
                                                        mode='bilinear')
+        torchvision.utils.save_image(frame_tensor.squeeze(0),
+                                     '/tmp/%d_resized.jpg' % frame_id)
         label_raw_output = model.predict_tensor(frame_tensor)
         str_label_output = model_output_to_str(label_raw_output)
         wrap_lmdb.write_lmdb(frame_id, str_label_output)
